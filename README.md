@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-# todo_app
-
-A new Flutter project.
 
 ## Getting Started
 
@@ -11,11 +7,7 @@ A few resources to get you started if this is your first Flutter project:
 
 - [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
 - [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-=======
+- 
 # ToDo_App
 The To-Do List app is a straightforward task management tool made with Flutter. Users may simply add, modify, and delete tasks, set priority and due dates, and search for specific tasks with this app. The simple and intuitive user interface provides an effortless environment for work organisation and efficiency.
 ## Features
