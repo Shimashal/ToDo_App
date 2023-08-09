@@ -32,6 +32,7 @@ class ToDoItems extends StatelessWidget {
       child: ListTile(
         onTap: () {
           print('Change was Made');
+          // Handle completion status change
           onToDoChange(todo);
         },
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -54,6 +55,7 @@ class ToDoItems extends StatelessWidget {
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Display due date and priority
             Row(
               children: [
                 const Icon(
@@ -91,6 +93,7 @@ class ToDoItems extends StatelessWidget {
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
+            // Edit and delete buttons
             Container(
               height: 35,
               width: 35,
@@ -154,7 +157,7 @@ class ToDoItems extends StatelessWidget {
       case Priority.Low:
         return Colors.green;
       case Priority.Medium:
-        return  accentOrange;
+        return accentOrange;
       case Priority.High:
         return Colors.red;
     }
@@ -243,6 +246,7 @@ class ToDoItems extends StatelessWidget {
     );
   }
 
+  // Show a date picker dialog for selecting due date
   Future<DateTime?> _selectDate(
       BuildContext context, DateTime initialDate) async {
     final DateTime? picked = await showDatePicker(

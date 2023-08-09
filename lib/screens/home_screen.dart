@@ -135,6 +135,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+  // Method to add a new ToDo item
  void addNewItem(String toDo, DateTime? dueDate) async {
   if (toDo.trim().isEmpty) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -173,7 +174,7 @@ class _HomeScreenState extends State<HomeScreen> {
   });
   todoController.clear();
 }
-
+ // Method to show the priority selection dialog
 Future<Priority?> _selectPriority(BuildContext context) async {
   return await showDialog<Priority>(
     context: context,
@@ -214,7 +215,7 @@ Future<Priority?> _selectPriority(BuildContext context) async {
   );
 }
 
-
+ // Method to show the date selection dialog
   Future<DateTime?> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -225,6 +226,7 @@ Future<Priority?> _selectPriority(BuildContext context) async {
     return picked;
   }
 
+// Method to filter ToDo items based on search keyword
   void searchFilter(String enteredKeyword) {
     List<ToDo> results = [];
     if (enteredKeyword.isEmpty) {
@@ -241,18 +243,21 @@ Future<Priority?> _selectPriority(BuildContext context) async {
     });
   }
 
+  // Method to handle toggling the completion status of a ToDo
   void handleToDoChanging(ToDo toDo) {
     setState(() {
       toDo.isDone = !toDo.isDone;
     });
   }
 
+// Method to delete a ToDo item
   void deleteItem(String id) {
     setState(() {
       todoList.removeWhere((item) => item.id == id);
     });
   }
 
+// Method to edit a ToDo item
  void editItem(
  ToDo toDo, String newToDoText, DateTime newDueDate) {
   setState(() {
@@ -261,7 +266,7 @@ Future<Priority?> _selectPriority(BuildContext context) async {
   });
 }
 
-
+  // Method to build the search box widget
   Widget searchBox() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -288,7 +293,7 @@ Future<Priority?> _selectPriority(BuildContext context) async {
       ),
     );
   }
-
+ // Method to build the AppBar widget
   AppBar_buildAppBar() {
     return AppBar(
       backgroundColor: accentOrange,

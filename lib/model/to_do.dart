@@ -21,8 +21,9 @@ class ToDo {
         isDone: true,
         dueDate: DateTime.now().add(Duration(days: 1)),
       ),
-      
     ];
   }
 }
-enum Priority { Low, Medium, High } 
+
+// An enum representing the priority levels of ToDo items
+enum Priority { Low, Medium, High }
