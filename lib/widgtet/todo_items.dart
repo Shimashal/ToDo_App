@@ -4,12 +4,11 @@ import 'package:intl/intl.dart';
 
 import '../model/to_do.dart';
 
-class ToDoItems extends StatelessWidget {
+class ToDoItems extends StatefulWidget {
   final ToDo todo;
   final Function(ToDo) onToDoChange;
   final Function(String) onDelete;
-  final Function(ToDo, String, DateTime) onEdit;
-  final DateFormat dateFormat = DateFormat('MMM dd, yyyy');
+  final Function(ToDo, String, DateTime,Priority) onEdit;
   final List<DropdownMenuItem<Priority>> priorityItems;
 
   ToDoItems({
@@ -26,6 +25,13 @@ class ToDoItems extends StatelessWidget {
             .toList();
 
   @override
+  State<ToDoItems> createState() => _ToDoItemsState();
+}
+
+class _ToDoItemsState extends State<ToDoItems> {
+  final DateFormat dateFormat = DateFormat('MMM dd, yyyy');
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
@@ -33,23 +39,24 @@ class ToDoItems extends StatelessWidget {
         onTap: () {
           print('Change was Made');
           // Handle completion status change
-          onToDoChange(todo);
+          widget.onToDoChange(widget.todo);
         },
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
         tileColor: Colors.white,
         leading: Icon(
-          todo.isDone
+          widget.todo.isDone
               ? Icons.check_box
               : Icons.check_box_outline_blank_outlined,
           color: amberLight,
         ),
         title: Text(
-          todo.toDoText!,
+          widget.todo.toDoText!,
           style: TextStyle(
             fontSize: 16,
             color: blacks,
-            decoration: todo.isDone ? TextDecoration.lineThrough : null,
+            decoration: widget.todo.isDone ? TextDecoration.lineThrough : null,
+            fontFamily: 'Arial',
           ),
         ),
         subtitle: Column(
@@ -65,10 +72,11 @@ class ToDoItems extends StatelessWidget {
                 ),
                 const SizedBox(width: 5),
                 Text(
-                  dateFormat.format(todo.dueDate ?? DateTime.now()),
+                  dateFormat.format(widget.todo.dueDate ?? DateTime.now()),
                   style: const TextStyle(
                     fontSize: 12,
                     color: Colors.grey,
+                    fontFamily: 'Arial',
                   ),
                 ),
               ],
@@ -79,11 +87,13 @@ class ToDoItems extends StatelessWidget {
                 maxWidth: 170, // Adjust the maximum width as needed
               ),
               child: Text(
-                _getPriorityText(todo.priority), // Display the priority text
+                _getPriorityText(
+                    widget.todo.priority), // Display the priority text
                 style: TextStyle(
                   fontSize: 12,
                   color: _getPriorityColor(
-                      todo.priority), // Set text color based on priority
+                      widget.todo.priority), // Set text color based on priority
+                  fontFamily: 'Arial',
                 ),
                 overflow: TextOverflow.ellipsis,
               ),
@@ -100,11 +110,11 @@ class ToDoItems extends StatelessWidget {
               padding: const EdgeInsets.all(0),
               margin: const EdgeInsets.symmetric(vertical: 12),
               decoration: BoxDecoration(
-                color: deepOrange,
+                color: accentOrange,
                 borderRadius: BorderRadius.circular(5),
               ),
               child: IconButton(
-                color: blacks,
+                color: Colors.black,
                 iconSize: 18,
                 icon: const Icon(Icons.edit),
                 onPressed: () {
@@ -120,7 +130,7 @@ class ToDoItems extends StatelessWidget {
               padding: const EdgeInsets.all(0),
               margin: const EdgeInsets.symmetric(vertical: 12),
               decoration: BoxDecoration(
-                color: deepOrange,
+                color: accentOrange,
                 borderRadius: BorderRadius.circular(5),
               ),
               child: IconButton(
@@ -129,7 +139,7 @@ class ToDoItems extends StatelessWidget {
                 iconSize: 18,
                 onPressed: () {
                   print('Delete Done');
-                  onDelete(todo.id!);
+                  widget.onDelete(widget.todo.id!);
                 },
               ),
             ),
@@ -165,18 +175,23 @@ class ToDoItems extends StatelessWidget {
 
   // Edit the ToDo item AlertDialog
   void _showEditDialog(BuildContext context) {
-    String newToDoText = todo.toDoText!;
-    DateTime newDueDate = todo.dueDate ?? DateTime.now();
-    Priority selectedPriority = todo.priority; // Initialize selectedPriority
+    String newToDoText = widget.todo.toDoText!;
+    DateTime newDueDate = widget.todo.dueDate ?? DateTime.now();
+    Priority selectedPriority =
+        widget.todo.priority; // Initialize selectedPriority
 
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          backgroundColor: accentOrange,
+          backgroundColor: Colors.white,
           title: const Text(
             'Edit ToDo Item',
-            style: TextStyle(color: blacks, fontWeight: FontWeight.w600),
+            style: TextStyle(
+              color: blacks,
+              fontWeight: FontWeight.w600,
+              fontFamily: 'Arial',
+            ),
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -186,7 +201,7 @@ class ToDoItems extends StatelessWidget {
                 onChanged: (value) {
                   newToDoText = value;
                 },
-                controller: TextEditingController(text: todo.toDoText),
+                controller: TextEditingController(text: widget.todo.toDoText),
                 decoration: const InputDecoration(labelText: 'ToDo Text'),
               ),
               const SizedBox(height: 10),
@@ -200,17 +215,23 @@ class ToDoItems extends StatelessWidget {
                 },
                 child: const Text(
                   'Pick a Due Date',
-                  style: TextStyle(color: blacks),
+                  style: TextStyle(
+                    color: blacks,
+                    fontFamily: 'Arial',
+                  ),
                 ),
               ),
               // Priority dropdown selection
               const SizedBox(height: 10),
               DropdownButtonFormField<Priority>(
                 value: selectedPriority,
-                items: priorityItems,
+                items: widget.priorityItems,
                 onChanged: (Priority? priority) {
                   if (priority != null) {
-                    selectedPriority = priority;
+                    setState(() {
+                      selectedPriority =
+                          priority; // It updates the selectedPriority
+                    });
                   }
                 },
                 decoration: const InputDecoration(
@@ -227,17 +248,24 @@ class ToDoItems extends StatelessWidget {
               },
               child: const Text(
                 'Cancel',
-                style: TextStyle(color: Colors.red),
+                style: TextStyle(
+                  color: Colors.red,
+                  fontFamily: 'Arial',
+                ),
               ),
             ),
             ElevatedButton(
               onPressed: () {
-                onEdit(todo, newToDoText, newDueDate);
+                widget.onEdit(widget.todo, newToDoText, newDueDate,selectedPriority);
+            
                 Navigator.of(context).pop();
               },
               child: const Text(
                 'Save',
-                style: TextStyle(color: Colors.blue),
+                style: TextStyle(
+                  color: Colors.blue,
+                  fontFamily: 'Arial',
+                ),
               ),
             ),
           ],

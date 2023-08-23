@@ -27,13 +27,14 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
+    final orientation = MediaQuery.of(context).orientation;
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 244, 240, 240),
       appBar: AppBar_buildAppBar(),
       body: Stack(
         children: [
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 25),
             child: Column(
               children: [
                 searchBox(),
@@ -41,12 +42,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: ListView(
                     children: [
                       Container(
-                        margin: const EdgeInsets.only(top: 50, bottom: 20),
+                        margin: const EdgeInsets.only(top: 30, bottom: 20),
                         child: const Text(
-                          'All ToDos',
+                          'To-Do List',
                           style: TextStyle(
                             fontSize: 30,
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.w400,
+                            fontFamily: 'Arial',
                           ),
                         ),
                       ),
@@ -63,7 +65,8 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
           ),
-          Align(
+          if (orientation == Orientation.portrait) // It shows the add button only in portrait mode
+           Align(
             alignment: Alignment.bottomCenter,
             child: Row(
               children: [
@@ -75,7 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       left: 20,
                     ),
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
+                      horizontal: 16,
                       vertical: 8,
                     ),
                     decoration: BoxDecoration(
@@ -93,7 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: TextField(
                       controller: todoController,
                       decoration: const InputDecoration(
-                        hintText: 'Add a new Todo Item',
+                        hintText: 'Add a new Todo item',
                         border: InputBorder.none,
                       ),
                       onChanged: (value) {
@@ -124,6 +127,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       style: TextStyle(
                         fontSize: 40,
                         color: blacks,
+                        fontFamily: 'Arial',
                       ),
                     ),
                   ),
@@ -140,7 +144,13 @@ class _HomeScreenState extends State<HomeScreen> {
   if (toDo.trim().isEmpty) {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Cannot add an empty ToDo item.'),
+         backgroundColor: redColor,
+        content: Text('Cannot add an empty ToDo item.',
+         style: TextStyle(
+        color: Colors.black, 
+        fontSize: 17,),
+        ),
+        
       ),
     );
     return;
@@ -259,10 +269,11 @@ Future<Priority?> _selectPriority(BuildContext context) async {
 
 // Method to edit a ToDo item
  void editItem(
- ToDo toDo, String newToDoText, DateTime newDueDate) {
+ ToDo toDo, String newToDoText, DateTime newDueDate,  Priority newPriority) {
   setState(() {
     toDo.toDoText = newToDoText;
     toDo.dueDate = newDueDate;
+    toDo.priority = newPriority;
   });
 }
 
@@ -300,10 +311,10 @@ Future<Priority?> _selectPriority(BuildContext context) async {
       elevation: 0,
       centerTitle: true,
       title: const Text(
-        'Task 01',
+        'ToDo',
         style: TextStyle(
           fontSize: 30,
-          fontWeight: FontWeight.w400,
+          fontWeight: FontWeight.w500,
           fontFamily: 'Arial',
         ),
       ),
