@@ -1,4 +1,3 @@
-
 ## Getting Started
 
 This project is a starting point for a Flutter application.
@@ -27,4 +26,3 @@ To run the app, you need to have Flutter and Dart installed on your machine. If 
 1. Make sure you have an emulator or a real device connected to your computer.
 2.  Run the app using the following command:
    flutter run
->>>>>>> fb7b73eaf65fe8a6b3c7cfaa985d6202d3fb0820
