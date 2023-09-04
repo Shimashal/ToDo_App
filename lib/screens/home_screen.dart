@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_app/constants/colors.dart';
 import 'package:intl/intl.dart';
-
+import 'dart:convert';      
 import '../model/to_do.dart';
 import '../widgtet/todo_items.dart';
 
@@ -13,7 +14,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final todoList = ToDo.todoList();
+  List<ToDo> todoList = [];
   List<ToDo> findSearch = [];
   final todoController = TextEditingController();
   final dateFormat = DateFormat('MMM dd, yyyy');
@@ -22,12 +23,41 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     findSearch = todoList;
     super.initState();
+    // Load tasks from local storage when the app starts
+    _loadTasks();
+    
   }
+
+   // Load tasks from local storage
+  Future<void> _loadTasks() async {
+    final prefs = await SharedPreferences.getInstance();
+    final taskListJson = prefs.getString('taskList');
+    
+    if (taskListJson != null) {
+      final List<Map<String, dynamic>> taskDataList = List<Map<String, dynamic>>.from(json.decode(taskListJson));
+      setState(() {
+        todoList.clear();
+        for (final taskData in taskDataList) {
+          final task = ToDo.fromJson(taskData);
+          todoList.add(task);
+        }
+      });
+    }
+  }
+
+  // Save tasks to local storage
+  Future<void> _saveTasks() async {
+    final prefs = await SharedPreferences.getInstance();
+    final taskListJson = json.encode(todoList.map((task) => task.toJson()).toList());
+    prefs.setString('taskList', taskListJson);
+  }
+
 
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final orientation = MediaQuery.of(context).orientation;
+    todoList.sort((a, b) => a.priority.index.compareTo(b.priority.index));
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 244, 240, 240),
       appBar: AppBar_buildAppBar(),
@@ -41,14 +71,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 Expanded(
                   child: ListView(
                     children: [
-                      Container(
-                        margin: const EdgeInsets.only(top: 30, bottom: 20),
-                        child: const Text(
-                          'To-Do List',
-                          style: TextStyle(
-                            fontSize: 30,
-                            fontWeight: FontWeight.w400,
-                            fontFamily: 'Arial',
+                      Center(
+                        child: Container(
+                          margin: const EdgeInsets.only(top: 30, bottom: 20),
+                          child: const Text(
+                            'To-Do List',
+                            style: TextStyle(
+                              fontSize: 30,
+                              fontWeight: FontWeight.w400,
+                              fontFamily: 'Arial',
+                            ),
                           ),
                         ),
                       ),
@@ -56,7 +88,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ToDoItems(
                           todo: toDo,
                           onToDoChange: handleToDoChanging,
-                          onDelete: deleteItem,
+                          onDelete: deleteItem,  
                           onEdit: editItem,
                         ),
                     ],
@@ -144,13 +176,14 @@ class _HomeScreenState extends State<HomeScreen> {
   if (toDo.trim().isEmpty) {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-         backgroundColor: redColor,
-        content: Text('Cannot add an empty ToDo item.',
-         style: TextStyle(
-        color: Colors.black, 
-        fontSize: 17,),
+        backgroundColor: redColor,
+        content: Text(
+          'Cannot add an empty ToDo item.',
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 17,
+          ),
         ),
-        
       ),
     );
     return;
@@ -182,8 +215,12 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   });
+
   todoController.clear();
+  // Save tasks to local storage after adding a new one
+  await _saveTasks();
 }
+
  // Method to show the priority selection dialog
 Future<Priority?> _selectPriority(BuildContext context) async {
   return await showDialog<Priority>(
@@ -265,6 +302,8 @@ Future<Priority?> _selectPriority(BuildContext context) async {
     setState(() {
       todoList.removeWhere((item) => item.id == id);
     });
+    // Save tasks to local storage after deleting one
+    _saveTasks();
   }
 
 // Method to edit a ToDo item
@@ -275,6 +314,8 @@ Future<Priority?> _selectPriority(BuildContext context) async {
     toDo.dueDate = newDueDate;
     toDo.priority = newPriority;
   });
+  // Save tasks to local storage after editing one
+    _saveTasks();
 }
 
   // Method to build the search box widget
@@ -317,7 +358,9 @@ Future<Priority?> _selectPriority(BuildContext context) async {
           fontWeight: FontWeight.w500,
           fontFamily: 'Arial',
         ),
+      
       ),
+      
     );
   }
 }

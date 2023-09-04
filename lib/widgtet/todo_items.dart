@@ -82,22 +82,40 @@ class _ToDoItemsState extends State<ToDoItems> {
               ],
             ),
             const SizedBox(height: 2), // Add some spacing
-            Container(
-              constraints: const BoxConstraints(
-                maxWidth: 170, // Adjust the maximum width as needed
-              ),
-              child: Text(
-                _getPriorityText(
-                    widget.todo.priority), // Display the priority text
-                style: TextStyle(
-                  fontSize: 12,
-                  color: _getPriorityColor(
-                      widget.todo.priority), // Set text color based on priority
-                  fontFamily: 'Arial',
-                ),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
+            // Container(
+            //   constraints: const BoxConstraints(
+            //     maxWidth: 170, // Adjust the maximum width as needed
+            //   ),
+            //   child: Text(
+            //     _getPriorityText(
+            //         widget.todo.priority), // Display the priority text
+            //     style: TextStyle(
+            //       fontSize: 12,
+            //       color: _getPriorityColor(
+            //           widget.todo.priority), // Set text color based on priority
+            //       fontFamily: 'Arial',
+            //     ),
+            //     overflow: TextOverflow.ellipsis,
+            //   ),
+            // ),
+
+            //new
+             Container(
+                  decoration: BoxDecoration(
+                    color: _getPriorityColor(widget.todo.priority),
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  child: Text(
+                    _getPriorityText(widget.todo.priority),
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: Colors.white,
+                      fontFamily: 'Arial',
+                    ),
+                  ),
+             ),
+
           ],
         ),
         trailing: Row(
